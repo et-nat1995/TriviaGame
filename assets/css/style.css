@@ -1,0 +1,40 @@
+*{
+    box-sizing: border-box;
+}
+
+body {
+    text-align: center;
+    font-family: 'Indie Flower', cursive;
+    font-size: 25px;
+    background: url("background.jpg");
+}
+
+.hidden {
+    display: none;
+}
+
+.container{
+    margin: 0 auto;
+}
+
+#trivia, #finalScore{
+    margin-left: 140px;
+    margin-right: 140px;
+    background: white;
+    border: 1px solid #444444;
+
+    border-radius: 5px;
+
+}
+
+#finalScore h3{
+    border-bottom: 1px solid grey;
+    width: 80%;
+    margin-left: 90px;
+}
+
+#titlePage{
+    background: white;
+    border: 1px solid #444444;
+    border-radius: 5px;
+}

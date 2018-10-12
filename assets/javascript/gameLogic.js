@@ -1,83 +1,129 @@
-var countDown = 120;
-var correct;
-var wrong;
-var answered;
-var interValId
-var runningClock = false;
+var time = 10;
+var timeInterval;
+var correct = 0;
+var wrong = 0;
+var answered = 0;
 
-var obj = [{
-    question: "The sky is blue?",
-    answer: "True",
-    possibleAnswers: ["True", "False"]
-},
-{
-    question: "Pizza is amazing",
-    answer: "True",
-    possibleAnswers: ["True", "False"]
-},
-{
-    question: "A new starbucks opened recently on BellRoad",
-    answer: "True",
-    possibleAnswers: ["True", "False"]
-},
-{
-    question: "College Parties Suck",
-    answer: "False",
-    possibleAnswers: ["True", "False"]
-},
-{
-    question: "I know how to code.",
-    answer: "True",
-    possibleAnswers: ["True", "False"]
-}];
-
-function startTime() {
-    if (!runningClock) {
-        interValId = setInterval(count, 1000);
-        runningClock = true;
+var questions = [
+    {
+        questions: "am i awesome?",
+        answers: ["no", "heck no", "yes", "heck yes"],
+        answerIndex: 3
+    },
+    {
+        questions: "am i not awesome?",
+        answers: ["no", "heck no", "yes", "heck yes"],
+        answerIndex: 1
+    },
+    {
+        questions: "Do you like kittens?",
+        answers: ["yes", "heck yes"],
+        answerIndex: 1
     }
-}
+
+];
 
 function count() {
-    countDown--;
-    var $time = $("#timer");
-
-    $time.html("<h3>Time Remaining: " + countDown+"</h3>")
-
-    console.log(countDown);
-    if (countDown === 0) {
-        clearInterval(interValId);
+    time--;
+    $("#timer").text(time);
+    if (count === 0) {
+        clearInterval(timeInterval);
     }
 }
 
-function renderQuestions(value) {
-    var $newForm = $("<form>");
-    var $question = $("<h3>").text(value.question);
+$("#timer").text(time);
 
-    $newForm.append($question);
-    
+$("#start").on("click", function () {
+    console.log("boom boom click");
 
-    for(var i = 0; i <value.possibleAnswers.length; i++){
-        if(value.possibleAnswers[i] === value.answer){
-            var $radioButtion = $("<input type='radio' name='possibleAnswers' value='correct'> " + value.possibleAnswers[i] +" </input>");
+    $("#intro").addClass("hidden");
+    $("#trivia").removeClass("hidden");
+
+    renderQuestions();
+
+    timeInterval = setInterval(function () {
+        time--;
+        $("#timer").text(time);
+        if (time === 0) {
+            checkTrivia();
+            renderResults();
+            clearInterval(timeInterval);
+            $("#trivia").addClass("hidden");
+            $("#finalScore").removeClass("hidden");
+
         }
-        else{
-            var $radioButtion = $("<input type='radio' name='possibleAnswers' value='wrong'> " + value.possibleAnswers[i] +" </input>");
-        }
-        $newForm.append($radioButtion);
-    }
+    }, 1000);
 
-    $("#questions").append($newForm);
-}
+    $("#submit").on("click", function () {
+        checkTrivia();
+        clearInterval(timeInterval);
+        renderResults();
+        $("#trivia").addClass("hidden");
+        $("#finalScore").removeClass("hidden");
+        time = 0;
+    });
 
-// obj.forEach(renderQuestions);
-// startTime();
+});
 
-// where everything will happen.
-$(document).ready(function(){
-    $(".start").on("click", function(){
-        startTime();
-        obj.forEach(renderQuestions);
+function renderQuestions() {
+
+    var $submit = $("<button type='button' id='submit'>").text("Submmit");
+
+    questions.forEach(function (question, index) {
+
+        var $form = $("<form>");
+        var $questions = $("<h3>").text(question.questions);
+
+        $form.append($questions);
+
+        question.answers.forEach(function (answers, i) {
+            var $input = $("<input type='radio'>");
+
+            $input.attr("value", answers);
+            $input.attr("name", index);
+            $form.append($input);
+            $form.append(answers);
+        });
+
+
+
+        $("#questions").append($form);
     })
 
-})
+    $("#questions").append($submit);
+
+}
+
+function renderResults() {
+    var $head = $("<h3>").text("Final Scores");
+    var $correct = $("<p>").text("Correct: " + correct);
+    var $wrong = $("<p>").text("Incorrect: " + wrong);
+    var $totalAnswered = $("<p>").text("Total Answered: " + answered);
+
+    $("#finalScore").append($head, $correct, $wrong, $totalAnswered);
+
+}
+
+function checkTrivia() {
+    var $from = $("form");
+
+    $from.each(function (i, elem) {
+        var index = i;
+        $(elem).find("input:checked").each(function (i, elem) {
+            answered++;
+
+
+            console.log(index);
+
+            if (elem.value === questions[index].answers[questions[index].answerIndex]) {
+                console.log(elem.value);
+                correct++;
+            }
+            else {
+                wrong++;
+            }
+
+        })
+    });
+
+}
